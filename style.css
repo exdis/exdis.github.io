@@ -1,3 +1,55 @@
+:root {
+  --white:  #e6d4a3;
+  --black:  #282828;
+  --red:    #f73028;
+  --orange: #cc881a;
+  --yellow: #f7b125;
+  --green:  #7db669;
+  --blue:   #719586;
+  --teal:   #578e57;
+  --pink:   #c77089;
+  --purple: #a04b73;
+}
+
 body {
-  background: #1d2021;
+  background: var(--black);
+  color: var(--white);
+  font-family: 'Fira Code', monospace;
+  font-size: 16px;
+  margin: 0;
+  padding 4px;
+}
+
+.input {
+  position: relative;
+  height: calc(100vh - 8px);
+  width: calc(100vw - 8px);
+}
+
+.input textarea {
+  width: 100%;
+  height: 100%;
+  resize: none;
+  border: none;
+  background: var(--black);
+  color: var(--white);
+  line-height: 22px;
+  text-indent: 40px;
+}
+
+.input textarea:focus {
+  outline: none;
+}
+
+.prompt {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: inline-block;
+  color: var(--red);
+}
+
+.prompt .bg {
+  color: var(--white);
+  background: var(--red);
 }
