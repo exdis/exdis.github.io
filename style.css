@@ -29,9 +29,23 @@ body {
 
 .prompt {
   color: var(--red);
+  display: inline-grid;
+  grid-template-columns: max-content max-content auto;
+  width: 100%;
 }
 
 .prompt .bg {
   color: var(--white);
   background: var(--red);
+}
+
+.prompt input {
+  border: 0;
+  background: var(--black);
+  font-family: 'FiraNerd', monospace;
+  color: var(--blue);
+}
+
+.prompt input:focus {
+  outline: none;
 }

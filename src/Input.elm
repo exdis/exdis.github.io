@@ -1,7 +1,7 @@
 module Input exposing (input)
 
-import Html exposing (Html, div, span, br, text, textarea)
-import Html.Attributes exposing (class, property)
+import Html exposing (Html, div, span, br, text)
+import Html.Attributes exposing (class, property, type_)
 
 underConstruction : String
 underConstruction = """
@@ -24,7 +24,9 @@ input model =
   div [] [
     div [] underConstructionBanner,
     div [ class "prompt" ]
-      [ span [ class "bg" ] [ text noBreakSpace ]
-      , text  "" ]
+      [ div [ class "bg" ] [ text noBreakSpace ]
+      , div [ class "arrow" ] [ text  "\u{00A0}" ]
+      , Html.input [ type_ "text" ] []
+      ]
     ]
 
