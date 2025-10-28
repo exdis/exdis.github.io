@@ -7,5 +7,5 @@ pub fn element() {
   ░▀▀▀░▀░▀░▀▀░░▀▀▀░▀░▀░░░▀▀▀░▀▀▀░▀░▀░▀▀▀░░▀░░▀░▀░▀▀▀░▀▀▀░░▀░░▀▀▀░▀▀▀░▀░▀
   "
 
-  html.div([], [html.text(ascii)])
+  html.pre([], [html.text(ascii)])
 }
