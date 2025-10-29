@@ -26,7 +26,8 @@ jobs:
       - name: Install Bun
         run: |
           curl -fsSL https://bun.sh/install | bash
-          echo "::add-path::$HOME/.bun/bin"
+      - name: Add Bun to PATH
+        run: echo "$HOME/.bun/bin" >> $GITHUB_PATH
       - name: Install dependencies
         run: gleam deps download
       - name: Build app
