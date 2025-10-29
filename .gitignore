@@ -1,6 +1,4 @@
-node_modules
-elm-stuff
-.DS_Store
-dist
-dist-ssr
-*.local
+/.lustre
+/dist
+/build
+erl_crash.dump

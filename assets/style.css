@@ -27,6 +27,21 @@ body {
   padding: 0;
 }
 
+pre {
+  margin: 0;
+  padding: 0;
+}
+
+input {
+  background: var(--black);
+  color: var(--white);
+  outline: none;
+  border: none;
+  position: absolute;
+  left: 42px;
+  right: 0;
+}
+
 .prompt {
   color: var(--red);
 }
