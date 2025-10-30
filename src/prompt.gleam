@@ -1,9 +1,8 @@
+import lustre/element.{type Element}
 import lustre/element/html
 import lustre/attribute
-import model.{type Model}
-import input
 
-pub fn element(model: Model) {
+pub fn element(child: Element(a)) {
   html.div([
     attribute.class("prompt")
   ], [
@@ -13,6 +12,6 @@ pub fn element(model: Model) {
       html.text("\u{00A0}~\u{00A0}"),
     ]),
     html.text(""),
-    input.element(model)
+    child
   ])
 }

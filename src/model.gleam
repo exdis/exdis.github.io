@@ -1,18 +1,16 @@
-import gleam/io
 import gleam/list
-import lustre/element
 import lustre/effect.{type Effect}
 import messages.{type Msg, UserInput, UserKeydown}
 
 pub type Model {
   Model(
     input: String,
-    output: List(String)
+    output: List(#(String, String, Bool)),
   )
 }
 
 pub fn init(_args) -> #(Model, Effect(Msg)) {
-  #(Model("", []), effect.none())
+  #(Model("", [#("", "", True)]), effect.none())
 }
 
 pub fn update(model: Model, msg: Msg) {
@@ -20,21 +18,15 @@ pub fn update(model: Model, msg: Msg) {
     UserInput(str) -> #(Model(..model, input: str), effect.none())
     UserKeydown(key) -> {
       case key {
-        "Enter" -> #(
-          Model(
-            ..model,
-            input: "",
-            output: list.append(model.output, [run_command(model.input)])
-          ),
-          effect.none()
-        )
+        "Enter" -> run_command(model)
         _ -> #(model, effect.none())
       }
     }
   }
 }
 
-fn run_command(command: String) {
+fn run_command(model: Model) {
+
   let help = "
   Available commands:
 
@@ -45,9 +37,21 @@ fn run_command(command: String) {
 
   Note: All commands are currently under construction.
         Please check back soon for updates.\n\n"
-  case command {
-    "help" -> help
-    _ -> "Command not found!\n"
+  let #(output, status) = case model.input {
+    "help" -> #(help, True)
+    _ -> #("Command not found!\n", False)
   }
+
+  #(
+    Model(
+      "",
+      list.append(model.output, [#(
+        model.input,
+        output,
+        status
+      )]),
+    ),
+    effect.none()
+  )
 }
 

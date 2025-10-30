@@ -38,12 +38,18 @@ input {
   outline: none;
   border: none;
   position: absolute;
-  left: 42px;
+  left: 46px;
   right: 0;
+  font-size: var(--font-size);
+  font-family: 'FiraNerd', monospace;
 }
 
 .prompt {
   color: var(--red);
+}
+
+.command {
+  color: var(--white);
 }
 
 .prompt .bg {
