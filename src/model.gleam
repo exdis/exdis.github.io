@@ -3,10 +3,7 @@ import lustre/effect.{type Effect}
 import messages.{type Msg, UserInput, UserKeydown}
 
 pub type Model {
-  Model(
-    input: String,
-    output: List(#(String, String, Bool)),
-  )
+  Model(input: String, output: List(#(String, String, Bool)))
 }
 
 pub fn init(_args) -> #(Model, Effect(Msg)) {
@@ -26,8 +23,8 @@ pub fn update(model: Model, msg: Msg) {
 }
 
 fn run_command(model: Model) {
-
-  let help = "
+  let help =
+    "
   Available commands:
 
     help       Display this help message
@@ -43,15 +40,7 @@ fn run_command(model: Model) {
   }
 
   #(
-    Model(
-      "",
-      list.append(model.output, [#(
-        model.input,
-        output,
-        status
-      )]),
-    ),
-    effect.none()
+    Model("", list.append(model.output, [#(model.input, output, status)])),
+    effect.none(),
   )
 }
-
