@@ -9,6 +9,6 @@ pub fn view(model: Model) {
   element.fragment([
     banner.element(),
     output.element(model),
-    prompt.element(input.element(model), True),
+    prompt.element(input.element(model), model.status),
   ])
 }

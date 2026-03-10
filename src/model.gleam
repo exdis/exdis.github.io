@@ -3,8 +3,12 @@ import gleam/string
 import lustre/effect.{type Effect}
 import messages.{type Msg, UserInput, UserKeydown}
 
+pub type Entry {
+  Entry(status: Bool, command: String, output: String)
+}
+
 pub type Model {
-  Model(input: String, output: List(#(String, String, Bool)))
+  Model(input: String, history: List(Entry), status: Bool)
 }
 
 const commands = ["help", "about", "projects", "contact"]
@@ -14,7 +18,7 @@ fn do_prevent_tab_default() -> Nil
 
 pub fn init(_args) -> #(Model, Effect(Msg)) {
   #(
-    Model(input: "", output: [#("", "", True)]),
+    Model(input: "", history: [], status: True),
     effect.from(fn(_) { do_prevent_tab_default() }),
   )
 }
@@ -92,8 +96,14 @@ fn run_command(model: Model) {
     _ -> #("Command not found!\n", False)
   }
 
+  let entry = Entry(status: model.status, command: model.input, output: output)
+
   #(
-    Model("", list.append(model.output, [#(model.input, output, status)])),
+    Model(
+      input: "",
+      history: list.append(model.history, [entry]),
+      status: status,
+    ),
     effect.none(),
   )
 }

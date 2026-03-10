@@ -38,19 +38,23 @@ input {
   color: var(--white);
   outline: none;
   border: none;
-  position: absolute;
-  left: 46px;
-  right: 0;
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  margin: 0;
   font-size: var(--font-size);
   font-family: 'FiraNerd', monospace;
 }
 
 .prompt {
+  display: flex;
   color: var(--red);
 }
 
 .command {
   color: var(--white);
+  flex: 1;
+  min-width: 0;
 }
 
 .prompt .bg {
