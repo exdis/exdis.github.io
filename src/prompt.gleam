@@ -8,7 +8,7 @@ pub fn element(child: Element(a), status: Bool) {
       html.span([attribute.class("bg")], [
         html.text("\u{00A0}~\u{00A0}"),
       ]),
-      html.text(""),
+      html.text("\u{E0B0}\u{00A0}"),
     ])
   let error_prompt =
     element.fragment([
@@ -16,10 +16,10 @@ pub fn element(child: Element(a), status: Bool) {
         html.text("\u{00A0}!\u{00A0}"),
       ]),
       html.span([attribute.class("bg")], [
-        html.text(""),
+        html.text("\u{E0B0}"),
         html.text("\u{00A0}~\u{00A0}"),
       ]),
-      html.text(""),
+      html.text("\u{E0B0}\u{00A0}"),
     ])
   let prompt = case status {
     True -> normal_prompt

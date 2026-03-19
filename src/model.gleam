@@ -16,10 +16,16 @@ const commands = ["help", "about", "projects", "contact"]
 @external(javascript, "./model_ffi.mjs", "preventTabDefault")
 fn do_prevent_tab_default() -> Nil
 
+@external(javascript, "./model_ffi.mjs", "setupFocus")
+fn do_setup_focus() -> Nil
+
 pub fn init(_args) -> #(Model, Effect(Msg)) {
   #(
     Model(input: "", history: [], status: True),
-    effect.from(fn(_) { do_prevent_tab_default() }),
+    effect.from(fn(_) {
+      do_prevent_tab_default()
+      do_setup_focus()
+    }),
   )
 }
 
@@ -55,20 +61,14 @@ fn tab_complete(model: Model) {
 }
 
 fn find_common_prefix(base: String, others: List(String)) -> String {
-  list.fold(others, base, fn(acc, other) {
-    common_prefix_of_two(acc, other)
-  })
+  list.fold(others, base, fn(acc, other) { common_prefix_of_two(acc, other) })
 }
 
 fn common_prefix_of_two(a: String, b: String) -> String {
   do_common_prefix(string.to_graphemes(a), string.to_graphemes(b), "")
 }
 
-fn do_common_prefix(
-  a: List(String),
-  b: List(String),
-  acc: String,
-) -> String {
+fn do_common_prefix(a: List(String), b: List(String), acc: String) -> String {
   case a, b {
     [x, ..rest_a], [y, ..rest_b] ->
       case x == y {
@@ -104,6 +104,6 @@ fn run_command(model: Model) {
       history: list.append(model.history, [entry]),
       status: status,
     ),
-    effect.none(),
+    effect.from(fn(_) { do_setup_focus() }),
   )
 }

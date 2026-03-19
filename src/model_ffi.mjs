@@ -5,3 +5,16 @@ export function preventTabDefault() {
     }
   });
 }
+
+export function setupFocus() {
+  const focus = () => {
+    const input = document.getElementById("terminal-input");
+    if (input) input.focus();
+  };
+
+  // Focus on load
+  requestAnimationFrame(focus);
+
+  // Focus when clicking anywhere on the page
+  document.addEventListener("click", focus);
+}

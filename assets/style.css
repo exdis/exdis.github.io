@@ -25,6 +25,7 @@ body {
   font-size: var(--font-size);
   margin: 0;
   padding: 0;
+  cursor: text;
 }
 
 pre {
@@ -34,7 +35,7 @@ pre {
 }
 
 input {
-  background: var(--black);
+  background: transparent;
   color: var(--white);
   outline: none;
   border: none;
@@ -44,6 +45,35 @@ input {
   margin: 0;
   font-size: var(--font-size);
   font-family: 'FiraNerd', monospace;
+  caret-color: transparent;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  flex: 1;
+  min-width: 0;
+}
+
+.cursor {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0.6em;
+  height: 1.1em;
+  background: var(--white);
+  pointer-events: none;
+  display: none;
+}
+
+input:focus ~ .cursor {
+  display: block;
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
 }
 
 .prompt {

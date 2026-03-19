@@ -11,7 +11,7 @@ pub fn element(model: Model) {
       html.div([attribute.class("output")], [
         prompt.element(
           html.span([attribute.class("command")], [
-            html.text(" " <> entry.command),
+            html.text(entry.command),
           ]),
           entry.status,
         ),
