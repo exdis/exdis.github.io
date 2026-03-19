@@ -66,6 +66,14 @@ input {
   display: none;
 }
 
+.suggestion {
+  position: absolute;
+  top: 0;
+  color: #665c54;
+  pointer-events: none;
+  white-space: pre;
+}
+
 input:focus ~ .cursor {
   display: block;
   animation: blink 1s step-end infinite;

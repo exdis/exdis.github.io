@@ -1,6 +1,7 @@
 import gleam/int
 import gleam/string
 import lustre/attribute
+import lustre/element
 import lustre/element/html
 import lustre/event
 import messages.{UserInput, UserKeydown}
@@ -23,5 +24,16 @@ pub fn element(model: Model) {
       ],
       [],
     ),
+    case model.suggestion {
+      "" -> element.none()
+      suggestion ->
+        html.span(
+          [
+            attribute.class("suggestion"),
+            attribute.style("left", cursor_offset <> "ch"),
+          ],
+          [html.text(suggestion)],
+        )
+    },
   ])
 }

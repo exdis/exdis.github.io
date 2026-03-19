@@ -8,7 +8,7 @@ pub type Entry {
 }
 
 pub type Model {
-  Model(input: String, history: List(Entry), status: Bool)
+  Model(input: String, history: List(Entry), status: Bool, suggestion: String)
 }
 
 const commands = ["help", "about", "projects", "contact"]
@@ -21,7 +21,7 @@ fn do_setup_focus() -> Nil
 
 pub fn init(_args) -> #(Model, Effect(Msg)) {
   #(
-    Model(input: "", history: [], status: True),
+    Model(input: "", history: [], status: True, suggestion: ""),
     effect.from(fn(_) {
       do_prevent_tab_default()
       do_setup_focus()
@@ -31,7 +31,10 @@ pub fn init(_args) -> #(Model, Effect(Msg)) {
 
 pub fn update(model: Model, msg: Msg) {
   case msg {
-    UserInput(str) -> #(Model(..model, input: str), effect.none())
+    UserInput(str) -> {
+      let suggestion = get_suggestion(str)
+      #(Model(..model, input: str, suggestion: suggestion), effect.none())
+    }
     UserKeydown(key) -> {
       case key {
         "Enter" -> run_command(model)
@@ -50,10 +53,17 @@ fn tab_complete(model: Model) {
         list.filter(commands, fn(cmd) { string.starts_with(cmd, prefix) })
       case matches {
         [] -> #(model, effect.none())
-        [single] -> #(Model(..model, input: single), effect.none())
+        [single] -> #(
+          Model(..model, input: single, suggestion: ""),
+          effect.none(),
+        )
         [first, ..rest] -> {
           let common = find_common_prefix(first, rest)
-          #(Model(..model, input: common), effect.none())
+          let suggestion = get_suggestion(common)
+          #(
+            Model(..model, input: common, suggestion: suggestion),
+            effect.none(),
+          )
         }
       }
     }
@@ -62,6 +72,20 @@ fn tab_complete(model: Model) {
 
 fn find_common_prefix(base: String, others: List(String)) -> String {
   list.fold(others, base, fn(acc, other) { common_prefix_of_two(acc, other) })
+}
+
+fn get_suggestion(input: String) -> String {
+  case input {
+    "" -> ""
+    prefix -> {
+      let match =
+        list.find(commands, fn(cmd) { string.starts_with(cmd, prefix) })
+      case match {
+        Ok(cmd) -> string.drop_start(cmd, string.length(prefix))
+        Error(_) -> ""
+      }
+    }
+  }
 }
 
 fn common_prefix_of_two(a: String, b: String) -> String {
@@ -103,6 +127,7 @@ fn run_command(model: Model) {
       input: "",
       history: list.append(model.history, [entry]),
       status: status,
+      suggestion: "",
     ),
     effect.from(fn(_) { do_setup_focus() }),
   )
