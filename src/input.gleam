@@ -9,6 +9,10 @@ import model.{type Model}
 
 pub fn element(model: Model) {
   let cursor_offset = int.to_string(string.length(model.input))
+  let input_class = case model.valid_command {
+    True -> "input-text valid-command"
+    False -> "input-text"
+  }
   html.span([attribute.class("input-wrapper")], [
     html.input([
       attribute.id("terminal-input"),
@@ -17,6 +21,7 @@ pub fn element(model: Model) {
       event.on_input(UserInput),
       event.on_keydown(UserKeydown),
     ]),
+    html.span([attribute.class(input_class)], [html.text(model.input)]),
     html.span(
       [
         attribute.class("cursor"),

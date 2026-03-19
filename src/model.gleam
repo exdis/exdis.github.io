@@ -4,11 +4,17 @@ import lustre/effect.{type Effect}
 import messages.{type Msg, UserInput, UserKeydown}
 
 pub type Entry {
-  Entry(status: Bool, command: String, output: String)
+  Entry(status: Bool, command: String, output: String, valid_command: Bool)
 }
 
 pub type Model {
-  Model(input: String, history: List(Entry), status: Bool, suggestion: String)
+  Model(
+    input: String,
+    history: List(Entry),
+    status: Bool,
+    suggestion: String,
+    valid_command: Bool,
+  )
 }
 
 const commands = ["help", "about", "projects", "contact"]
@@ -21,7 +27,13 @@ fn do_setup_focus() -> Nil
 
 pub fn init(_args) -> #(Model, Effect(Msg)) {
   #(
-    Model(input: "", history: [], status: True, suggestion: ""),
+    Model(
+      input: "",
+      history: [],
+      status: True,
+      suggestion: "",
+      valid_command: False,
+    ),
     effect.from(fn(_) {
       do_prevent_tab_default()
       do_setup_focus()
@@ -33,7 +45,11 @@ pub fn update(model: Model, msg: Msg) {
   case msg {
     UserInput(str) -> {
       let suggestion = get_suggestion(str)
-      #(Model(..model, input: str, suggestion: suggestion), effect.none())
+      let valid = is_valid_command(str)
+      #(
+        Model(..model, input: str, suggestion: suggestion, valid_command: valid),
+        effect.none(),
+      )
     }
     UserKeydown(key) -> {
       case key {
@@ -54,14 +70,20 @@ fn tab_complete(model: Model) {
       case matches {
         [] -> #(model, effect.none())
         [single] -> #(
-          Model(..model, input: single, suggestion: ""),
+          Model(..model, input: single, suggestion: "", valid_command: True),
           effect.none(),
         )
         [first, ..rest] -> {
           let common = find_common_prefix(first, rest)
           let suggestion = get_suggestion(common)
+          let valid = is_valid_command(common)
           #(
-            Model(..model, input: common, suggestion: suggestion),
+            Model(
+              ..model,
+              input: common,
+              suggestion: suggestion,
+              valid_command: valid,
+            ),
             effect.none(),
           )
         }
@@ -86,6 +108,10 @@ fn get_suggestion(input: String) -> String {
       }
     }
   }
+}
+
+fn is_valid_command(input: String) -> Bool {
+  list.contains(commands, input)
 }
 
 fn common_prefix_of_two(a: String, b: String) -> String {
@@ -120,7 +146,13 @@ fn run_command(model: Model) {
     _ -> #("Command not found!\n", False)
   }
 
-  let entry = Entry(status: model.status, command: model.input, output: output)
+  let entry =
+    Entry(
+      status: model.status,
+      command: model.input,
+      output: output,
+      valid_command: model.valid_command,
+    )
 
   #(
     Model(
@@ -128,6 +160,7 @@ fn run_command(model: Model) {
       history: list.append(model.history, [entry]),
       status: status,
       suggestion: "",
+      valid_command: False,
     ),
     effect.from(fn(_) { do_setup_focus() }),
   )

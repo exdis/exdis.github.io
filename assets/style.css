@@ -14,6 +14,7 @@
   --teal:   #578e57;
   --pink:   #c77089;
   --purple: #a04b73;
+  --light-blue: #83a598;
 
   --font-size: 16px;
 }
@@ -36,7 +37,7 @@ pre {
 
 input {
   background: transparent;
-  color: var(--white);
+  color: transparent;
   outline: none;
   border: none;
   flex: 1;
@@ -46,6 +47,8 @@ input {
   font-size: var(--font-size);
   font-family: 'FiraNerd', monospace;
   caret-color: transparent;
+  position: relative;
+  z-index: 1;
 }
 
 .input-wrapper {
@@ -53,6 +56,19 @@ input {
   display: flex;
   flex: 1;
   min-width: 0;
+}
+
+.input-text {
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: var(--white);
+  pointer-events: none;
+  white-space: pre;
+}
+
+.input-text.valid-command {
+  color: var(--blue);
 }
 
 .cursor {
@@ -93,6 +109,10 @@ input:focus ~ .cursor {
   color: var(--white);
   flex: 1;
   min-width: 0;
+}
+
+.command.valid-command {
+  color: var(--blue);
 }
 
 .prompt .bg {

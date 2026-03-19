@@ -8,9 +8,13 @@ import prompt
 pub fn element(model: Model) {
   element.fragment(
     list.map(model.history, fn(entry) {
+      let cmd_class = case entry.valid_command {
+        True -> "command valid-command"
+        False -> "command"
+      }
       html.div([attribute.class("output")], [
         prompt.element(
-          html.span([attribute.class("command")], [
+          html.span([attribute.class(cmd_class)], [
             html.text(entry.command),
           ]),
           entry.status,
