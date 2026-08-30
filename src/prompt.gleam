@@ -2,7 +2,7 @@ import lustre/attribute
 import lustre/element.{type Element}
 import lustre/element/html
 
-pub fn element(child: Element(a), status: Bool) {
+pub fn element(child: Element(a), status: Int) {
   let normal_prompt =
     element.fragment([
       html.span([attribute.class("bg")], [
@@ -22,8 +22,8 @@ pub fn element(child: Element(a), status: Bool) {
       html.text("\u{E0B0}\u{00A0}"),
     ])
   let prompt = case status {
-    True -> normal_prompt
-    False -> error_prompt
+    0 -> normal_prompt
+    _ -> error_prompt
   }
   html.div([attribute.class("prompt")], [prompt, child])
 }

@@ -67,7 +67,7 @@ input {
   white-space: pre;
 }
 
-.input-text.valid-command {
+.valid-command {
   color: var(--blue);
 }
 

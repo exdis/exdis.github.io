@@ -1,23 +1,32 @@
+import command.{type Command}
+import commands/help.{help}
 import gleam/list
 import gleam/string
 import lustre/effect.{type Effect}
 import messages.{type Msg, UserInput, UserKeydown}
+import parser.{type Invocation, parse}
 
 pub type Entry {
-  Entry(status: Bool, command: String, output: String, valid_command: Bool)
+  Entry(status: Int, command: String, output: String, valid_command: Bool)
 }
 
 pub type Model {
   Model(
     input: String,
     history: List(Entry),
-    status: Bool,
+    status: Int,
     suggestion: String,
     valid_command: Bool,
   )
 }
 
-const commands = ["help", "about", "projects", "contact"]
+pub fn commands() -> List(Command) {
+  [help()]
+}
+
+fn command_names() -> List(String) {
+  list.map(commands(), fn(item) { item.name })
+}
 
 @external(javascript, "./model_ffi.mjs", "preventTabDefault")
 fn do_prevent_tab_default() -> Nil
@@ -30,7 +39,7 @@ pub fn init(_args) -> #(Model, Effect(Msg)) {
     Model(
       input: "",
       history: [],
-      status: True,
+      status: 0,
       suggestion: "",
       valid_command: False,
     ),
@@ -66,7 +75,7 @@ fn tab_complete(model: Model) {
     "" -> #(model, effect.none())
     prefix -> {
       let matches =
-        list.filter(commands, fn(cmd) { string.starts_with(cmd, prefix) })
+        list.filter(command_names(), fn(cmd) { string.starts_with(cmd, prefix) })
       case matches {
         [] -> #(model, effect.none())
         [single] -> #(
@@ -76,13 +85,12 @@ fn tab_complete(model: Model) {
         [first, ..rest] -> {
           let common = find_common_prefix(first, rest)
           let suggestion = get_suggestion(common)
-          let valid = is_valid_command(common)
           #(
             Model(
               ..model,
               input: common,
               suggestion: suggestion,
-              valid_command: valid,
+              valid_command: True,
             ),
             effect.none(),
           )
@@ -101,7 +109,7 @@ fn get_suggestion(input: String) -> String {
     "" -> ""
     prefix -> {
       let match =
-        list.find(commands, fn(cmd) { string.starts_with(cmd, prefix) })
+        list.find(command_names(), fn(cmd) { string.starts_with(cmd, prefix) })
       case match {
         Ok(cmd) -> string.drop_start(cmd, string.length(prefix))
         Error(_) -> ""
@@ -111,7 +119,7 @@ fn get_suggestion(input: String) -> String {
 }
 
 fn is_valid_command(input: String) -> Bool {
-  list.contains(commands, input)
+  list.contains(command_names(), input)
 }
 
 fn common_prefix_of_two(a: String, b: String) -> String {
@@ -130,21 +138,9 @@ fn do_common_prefix(a: List(String), b: List(String), acc: String) -> String {
 }
 
 fn run_command(model: Model) {
-  let help =
-    "
-  Available commands:
-
-    help       Display this help message
-    about      Learn more about this site
-    projects   View ongoing projects
-    contact    Contact the site owner
-
-  Note: All commands are currently under construction.
-        Please check back soon for updates.\n\n"
-  let #(output, status) = case model.input {
-    "help" -> #(help, True)
-    "" -> #("", True)
-    _ -> #("Command not found!\n", False)
+  let #(output, status) = case parse(model.input) {
+    [] -> #("", 0)
+    [invocation, ..] -> lookup(invocation)
   }
 
   let entry =
@@ -152,7 +148,7 @@ fn run_command(model: Model) {
       status: model.status,
       command: model.input,
       output: output,
-      valid_command: model.valid_command,
+      valid_command: status == 0,
     )
 
   #(
@@ -161,8 +157,19 @@ fn run_command(model: Model) {
       history: list.append(model.history, [entry]),
       status: status,
       suggestion: "",
-      valid_command: False,
+      valid_command: status == 0,
     ),
     effect.from(fn(_) { do_setup_focus() }),
   )
+}
+
+fn lookup(invocation: Invocation) -> #(String, Int) {
+  case list.find(commands(), fn(item) { item.name == invocation.name }) {
+    Ok(cmd) -> cmd.run(invocation.args)
+    Error(_) -> #("Command not found!\n", 127)
+  }
+}
+
+pub fn is_command(name: String) -> Bool {
+  list.contains(command_names(), name)
 }
