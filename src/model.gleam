@@ -143,6 +143,7 @@ fn run_command(model: Model) {
         Please check back soon for updates.\n\n"
   let #(output, status) = case model.input {
     "help" -> #(help, True)
+    "" -> #("", True)
     _ -> #("Command not found!\n", False)
   }
 
